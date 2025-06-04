@@ -54,8 +54,8 @@ def sitemap():
 @app.route("/api/signup", methods=["POST"])
 def signup():
     data = request.get_json()
-    hashed_password = generate_password_hash(data["password"])
-    new_user = User(email=data["email"], password_hash=hashed_password)
+    password = generate_password_hash(data["password"])
+    new_user = User(email=data["email"], password_hash=password)
     db.session.add(new_user)
     db.session.commit()
     return jsonify({"message": "User created successfully"}), 201

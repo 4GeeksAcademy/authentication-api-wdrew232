@@ -1,23 +1,33 @@
 import React, { useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import { setToken } from "../store";
 
-function Login() {
+export function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const navigate = useNavigate();
 
-  const handleSubmit = async (e) => {
+  const handleLogin = async (e) => {
     e.preventDefault();
-    const response = await axios.post("https://expert-space-invention-x5vj4x6pqp9rc5r6-3001.app.github.dev/login", { email, password });
-    sessionStorage.setItem("token", response.data.access_token);
-    navigate("/private");
+    try {
+      const response = await axios.post("https://didactic-trout-g47gp69rw55qfqg4-3001.app.github.dev/login", { email, password });
+      
+      if (response.status === 200) {
+        setToken(response.data.access_token);
+        alert("Login successful! Redirecting to private screen.");
+        navigate("/private");
+      }
+    } catch (err) {
+      alert("Login failed. Please check your credentials and try again.");
+      console.error(err);
+    }
   };
 
   return (
-    <form onSubmit={handleSubmit}>
-      <input type="email" placeholder="Email" onChange={(e) => setEmail(e.target.value)} />
-      <input type="password" placeholder="Password" onChange={(e) => setPassword(e.target.value)} />
+    <form onSubmit={handleLogin}>
+      <input type="email" placeholder="Email" onChange={(e) => setEmail(e.target.value)} required />
+      <input type="password" placeholder="Password" onChange={(e) => setPassword(e.target.value)} required />
       <button type="submit">Login</button>
     </form>
   );
