@@ -1,7 +1,7 @@
 import React, { useState } from "react";
-import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { setToken } from "../store";
+
 
 export function Login() {
   const [email, setEmail] = useState("");
@@ -11,25 +11,35 @@ export function Login() {
   const handleLogin = async (e) => {
     e.preventDefault();
     try {
-      const response = await axios.post("https://didactic-trout-g47gp69rw55qfqg4-3001.app.github.dev/login", { email, password });
-      
-      if (response.status === 200) {
-        setToken(response.data.access_token);
+      const response = await fetch("https://didactic-trout-g47gp69rw55qfqg4-3001.app.github.dev/api/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json", "Access-Control-Allow-Origin": "*" },
+        body: JSON.stringify({ email, password }),
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        setToken(data.access_token);
         alert("Login successful! Redirecting to private screen.");
         navigate("/private");
+      } else {
+        alert("Login failed. Please check your credentials.");
       }
     } catch (err) {
-      alert("Login failed. Please check your credentials and try again.");
       console.error(err);
+      alert("Network error. Try again later.");
     }
   };
 
   return (
-    <form onSubmit={handleLogin}>
-      <input type="email" placeholder="Email" onChange={(e) => setEmail(e.target.value)} required />
-      <input type="password" placeholder="Password" onChange={(e) => setPassword(e.target.value)} required />
-      <button type="submit">Login</button>
-    </form>
+    <div className="form-container">
+      <form onSubmit={handleLogin}>
+        <h2>Login</h2>
+        <input type="email" placeholder="Email" onChange={(e) => setEmail(e.target.value)} required />
+        <input type="password" placeholder="Password" onChange={(e) => setPassword(e.target.value)} required />
+        <button type="submit">Login</button>
+      </form>
+    </div>
   );
 }
 

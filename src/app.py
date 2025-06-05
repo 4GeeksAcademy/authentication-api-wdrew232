@@ -4,6 +4,7 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 from flask_jwt_extended import JWTManager, create_access_token, jwt_required, get_jwt_identity
 from werkzeug.security import generate_password_hash, check_password_hash
+from flask_cors import CORS  # 🔹 Import CORS
 
 from api.utils import APIException, generate_sitemap
 from api.models import db, User
@@ -26,6 +27,9 @@ else:
 
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 app.config["JWT_SECRET_KEY"] = "your_secret_key"
+
+# Enable CORS 🔹
+CORS(app, resources={r"/*": {"origins": "*"}})
 
 # Initialize extensions
 MIGRATE = Migrate(app, db, compare_type=True)
